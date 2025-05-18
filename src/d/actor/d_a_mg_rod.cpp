@@ -1,13 +1,15 @@
 /**
  * @file d_a_mg_rod.cpp
- * 
-*/
+ *
+ */
 
 #include "d/actor/d_a_mg_rod.h"
 
 #include "d/d_camera.h"
-#include "dol2asm.h"
 #include "d/d_cc_d.h"
+#include "dol2asm.h"
+
+#include "d/d_com_inf_game.h"
 
 //
 // Forward References:
@@ -74,7 +76,6 @@ extern "C" static void dmg_rod_Execute__FP13dmg_rod_class();
 extern "C" static void dmg_rod_IsDelete__FP13dmg_rod_class();
 extern "C" static void dmg_rod_Delete__FP13dmg_rod_class();
 extern "C" static void useHeapInit__FP10fopAc_ac_c();
-extern "C" static void dmg_rod_Create__FP10fopAc_ac_c();
 extern "C" void __ct__13dmg_rod_classFv();
 extern "C" void __dt__8cM3dGSphFv();
 extern "C" void __dt__8cM3dGAabFv();
@@ -156,7 +157,6 @@ extern "C" void fpcSch_JudgeForPName__FPvPv();
 extern "C" void fpcSch_JudgeByID__FPvPv();
 extern "C" void dStage_changeScene__FifUlScsi();
 extern "C" void setItemBombNumCount__14dComIfG_play_cFUcs();
-extern "C" void dComIfG_resLoad__FP30request_of_phase_process_classPCc();
 extern "C" void dComIfG_resDelete__FP30request_of_phase_process_classPCc();
 extern "C" void dComIfGp_getReverb__Fi();
 extern "C" void getItem__17dSv_player_item_cCFib();
@@ -288,7 +288,7 @@ extern "C" extern void* __vt__14cCcD_ShapeAttr[22];
 extern "C" extern void* __vt__9cCcD_Stts[8];
 extern "C" u8 m_cpadInfo__8mDoCPd_c[256];
 extern "C" u8 now__14mDoMtx_stack_c[48];
-extern "C" extern u8 g_dComIfG_gameInfo[122384];
+// extern "C" extern u8 g_dComIfG_gameInfo[122384];
 extern "C" extern u8 g_meter2_info[248];
 extern "C" extern u8 g_Counter[12 + 4 /* padding */];
 extern "C" u8 mCurrentMtx__6J3DSys[48];
@@ -677,41 +677,14 @@ SECTION_DATA static u8 esa_bmd[8] = {
 /* 804BBA6C-804BBAAC 00021C 0040+00 1/1 0/0 0/0 .data            cc_sph_src$11380 */
 static dCcD_SrcSph cc_sph_src = {
     {
-        {0x0, {{0x0, 0x0, 0x0}, {0x0, 0x0}, 0x49}}, // mObj
-        {dCcD_SE_NONE, 0x0, 0x0, 0x0, 0x0}, // mGObjAt
-        {dCcD_SE_NONE, 0x0, 0x0, 0x0, 0x2}, // mGObjTg
-        {0x0}, // mGObjCo
-    }, // mObjInf
+        {0x0, {{0x0, 0x0, 0x0}, {0x0, 0x0}, 0x49}},  // mObj
+        {dCcD_SE_NONE, 0x0, 0x0, 0x0, 0x0},          // mGObjAt
+        {dCcD_SE_NONE, 0x0, 0x0, 0x0, 0x2},          // mGObjTg
+        {0x0},                                       // mGObjCo
+    },                                               // mObjInf
     {
-        {{0.0f, 0.0f, 0.0f}, 5.0f} // mSph
-    } // mSphAttr
-};
-
-/* 804BBAAC-804BBACC -00001 0020+00 1/0 0/0 0/0 .data            l_dmg_rod_Method */
-static actor_method_class l_dmg_rod_Method = {
-    (process_method_func)dmg_rod_Create__FP10fopAc_ac_c,
-    (process_method_func)dmg_rod_Delete__FP13dmg_rod_class,
-    (process_method_func)dmg_rod_Execute__FP13dmg_rod_class,
-    (process_method_func)dmg_rod_IsDelete__FP13dmg_rod_class,
-    (process_method_func)dmg_rod_Draw__FP13dmg_rod_class,
-};
-
-/* 804BBACC-804BBAFC -00001 0030+00 0/0 0/0 1/0 .data            g_profile_MG_ROD */
-extern actor_process_profile_definition g_profile_MG_ROD = {
-  fpcLy_CURRENT_e,            // mLayerID
-  8,                          // mListID
-  fpcPi_CURRENT_e,            // mListPrio
-  PROC_MG_ROD,                // mProcName
-  &g_fpcLf_Method.base,      // sub_method
-  sizeof(dmg_rod_class),      // mSize
-  0,                          // mSizeOther
-  0,                          // mParameters
-  &g_fopAc_Method.base,       // sub_method
-  438,                        // mPriority
-  &l_dmg_rod_Method,          // sub_method
-  0x00060000,                 // mStatus
-  fopAc_ACTOR_e,              // mActorType
-  fopAc_CULLBOX_0_e,          // cullType
+        {{0.0f, 0.0f, 0.0f}, 5.0f}  // mSph
+    }  // mSphAttr
 };
 
 /* 804BBAFC-804BBB08 0002AC 000C+00 1/1 0/0 0/0 .data            __vt__12dBgS_AcchCir */
@@ -2524,8 +2497,9 @@ SECTION_DEAD static char const* const stringBase_804BB838 = "Alink";
 #pragma pop
 
 /* 804BA1F4-804BA83C 010CF4 0648+00 1/1 0/0 0/0 .text            useHeapInit__FP10fopAc_ac_c */
-static void useHeapInit(fopAc_ac_c* param_0) {
+static int useHeapInit(fopAc_ac_c* param_0) {
     // NONMATCHING
+    return 1;
 }
 
 /* ############################################################################################## */
@@ -2543,9 +2517,36 @@ SECTION_DEAD static char const* const stringBase_804BB83E = "T_MUKAO";
 SECTION_DEAD static char const* const stringBase_804BB846 = "Mg_rod";
 #pragma pop
 
+int dmg_rod_class::create() {
+    u32 uVar8;
+    fopAcM_SetupActor(this, dmg_rod_class);
+
+    if (field_0x574 == 0) {
+        // field945_0xF7C = 0;
+        mResName = "Mg_rod";
+        uVar8 = 0x15FE0;
+    } else {
+        // field945_0xF7C = 1;
+        mResName = "Alink";
+        uVar8 = 0xC9A0;
+    }
+
+    int phaseState = dComIfG_resLoad(&mPhase, mResName);
+
+    if (phaseState == cPhs_COMPLEATE_e) {
+        if (!fopAcM_entrySolidHeap(this, useHeapInit, uVar8)) {
+            return cPhs_ERROR_e;
+        }
+        // dmg_rod_Execute();
+    }
+
+    return phaseState;
+}
+
 /* 804BA83C-804BAC0C 01133C 03D0+00 1/0 0/0 0/0 .text            dmg_rod_Create__FP10fopAc_ac_c */
-static void dmg_rod_Create(fopAc_ac_c* param_0) {
+static int dmg_rod_Create(fopAc_ac_c* i_this) {
     // NONMATCHING
+    return static_cast<dmg_rod_class*>(i_this)->create();
 }
 
 /* 804BAC0C-804BADAC 01170C 01A0+00 1/1 0/0 0/0 .text            __ct__13dmg_rod_classFv */
@@ -2653,52 +2654,15 @@ extern "C" void __dt__4cXyzFv() {
     // NONMATCHING
 }
 
-/* 804BB1F0-804BB200 011CF0 0010+00 1/1 0/0 0/0 .text            daAlink_getAlinkActorClass__Fv */
-static void daAlink_getAlinkActorClass() {
-    // NONMATCHING
-}
-
-/* 804BB200-804BB21C 011D00 001C+00 1/1 0/0 0/0 .text            dComIfGp_event_runCheck__Fv */
-static void dComIfGp_event_runCheck() {
-    // NONMATCHING
-}
-
-/* 804BB21C-804BB238 011D1C 001C+00 1/1 0/0 0/0 .text            dComIfGp_checkPlayerStatus0__FiUl
- */
-static void dComIfGp_checkPlayerStatus0(int param_0, u32 param_1) {
-    // NONMATCHING
-}
-
 /* 804BB238-804BB248 011D38 0010+00 1/1 0/0 0/0 .text            __ct__4cXyzFfff */
 // cXyz::cXyz(f32 param_0, f32 param_1, f32 param_2) {
 extern "C" void __ct__4cXyzFfff() {
     // NONMATCHING
 }
 
-/* 804BB248-804BB260 011D48 0018+00 1/1 0/0 0/0 .text            dComIfGp_getCamera__Fi */
-static void dComIfGp_getCamera(int param_0) {
-    // NONMATCHING
-}
-
-/* 804BB260-804BB27C 011D60 001C+00 1/1 0/0 0/0 .text            dComIfGp_getPlayerCameraID__Fi */
-static void dComIfGp_getPlayerCameraID(int param_0) {
-    // NONMATCHING
-}
-
-/* 804BB27C-804BB294 011D7C 0018+00 1/1 0/0 0/0 .text            dComIfGp_getPlayer__Fi */
-// static void dComIfGp_getPlayer(int param_0) {
-extern "C" void dComIfGp_getPlayer__Fi() {
-    // NONMATCHING
-}
-
 /* 804BB294-804BB2A8 011D94 0014+00 1/1 0/0 0/0 .text            cancelOriginalDemo__9daPy_py_cFv */
 // void daPy_py_c::cancelOriginalDemo() {
 extern "C" void cancelOriginalDemo__9daPy_py_cFv() {
-    // NONMATCHING
-}
-
-/* 804BB2A8-804BB2B8 011DA8 0010+00 1/1 0/0 0/0 .text            daPy_getPlayerActorClass__Fv */
-static void daPy_getPlayerActorClass() {
     // NONMATCHING
 }
 
@@ -2759,16 +2723,6 @@ extern "C" void getTrigZ__8mDoCPd_cFUl() {
 /* 804BB4DC-804BB4F8 011FDC 001C+00 1/1 0/0 0/0 .text            getTrigA__8mDoCPd_cFUl */
 // void mDoCPd_c::getTrigA(u32 param_0) {
 extern "C" void getTrigA__8mDoCPd_cFUl() {
-    // NONMATCHING
-}
-
-/* 804BB4F8-804BB50C 011FF8 0014+00 1/1 0/0 0/0 .text            dComIfGp_setDoStatusForce__FUcUc */
-static void dComIfGp_setDoStatusForce(u8 param_0, u8 param_1) {
-    // NONMATCHING
-}
-
-/* 804BB50C-804BB520 01200C 0014+00 1/1 0/0 0/0 .text            dComIfGp_setZStatusForce__FUcUc */
-static void dComIfGp_setZStatusForce(u8 param_0, u8 param_1) {
     // NONMATCHING
 }
 
@@ -2952,3 +2906,30 @@ static u8 data_804BC18C[4];
 #pragma pop
 
 /* 804BB830-804BB830 0002FC 0000+00 0/0 0/0 0/0 .rodata          @stringBase0 */
+
+/* 804BBAAC-804BBACC -00001 0020+00 1/0 0/0 0/0 .data            l_dmg_rod_Method */
+static actor_method_class l_dmg_rod_Method = {
+    (process_method_func)dmg_rod_Create,
+    (process_method_func)dmg_rod_Delete__FP13dmg_rod_class,
+    (process_method_func)dmg_rod_Execute__FP13dmg_rod_class,
+    (process_method_func)dmg_rod_IsDelete__FP13dmg_rod_class,
+    (process_method_func)dmg_rod_Draw__FP13dmg_rod_class,
+};
+
+/* 804BBACC-804BBAFC -00001 0030+00 0/0 0/0 1/0 .data            g_profile_MG_ROD */
+extern actor_process_profile_definition g_profile_MG_ROD = {
+    fpcLy_CURRENT_e,        // mLayerID
+    8,                      // mListID
+    fpcPi_CURRENT_e,        // mListPrio
+    PROC_MG_ROD,            // mProcName
+    &g_fpcLf_Method.base,   // sub_method
+    sizeof(dmg_rod_class),  // mSize
+    0,                      // mSizeOther
+    0,                      // mParameters
+    &g_fopAc_Method.base,   // sub_method
+    438,                    // mPriority
+    &l_dmg_rod_Method,      // sub_method
+    0x00060000,             // mStatus
+    fopAc_ACTOR_e,          // mActorType
+    fopAc_CULLBOX_0_e,      // cullType
+};
