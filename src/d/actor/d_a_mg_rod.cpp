@@ -9,6 +9,7 @@
 #include "d/d_cc_d.h"
 #include "dol2asm.h"
 
+#include "d/actor/d_a_alink.h"
 #include "d/d_com_inf_game.h"
 
 //
@@ -102,7 +103,6 @@ extern "C" static void dComIfGp_getCamera__Fi();
 extern "C" static void dComIfGp_getPlayerCameraID__Fi();
 extern "C" static void dComIfGp_getPlayer__Fi();
 extern "C" void cancelOriginalDemo__9daPy_py_cFv();
-extern "C" static void daPy_getPlayerActorClass__Fv();
 extern "C" void __ct__4cXyzFRC4cXyz();
 extern "C" static void JMAFastSqrt__Ff();
 extern "C" void changeDemoMode__9daPy_py_cFUliis();
@@ -2521,7 +2521,19 @@ int dmg_rod_class::create() {
     u32 uVar8;
     fopAcM_SetupActor(this, dmg_rod_class);
 
-    if (field_0x574 == 0) {
+    // TODO: find these values
+    field_0x574 = 0x0;
+    field_0x575 = 0;
+    field_0x576 = 0x0;
+
+    // if field_0x0574 == '\x0f'
+
+    if (daPy_getPlayerActorClass()->checkCanoeRide()) {
+        field_0x574 = 0xD;
+        field_0x575 = 0;
+    }
+
+    if (field_0x575 == 0) {
         // field945_0xF7C = 0;
         mResName = "Mg_rod";
         uVar8 = 0x15FE0;

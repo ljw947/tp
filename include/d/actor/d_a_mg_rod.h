@@ -55,7 +55,7 @@ public:
     /* 0x0568 */ request_of_phase_process_class mPhase;
     /* 0x0570 */ char* mResName;
     /* 0x0574 */ s8 field_0x574;
-    /* 0x0575 */ s8 field_0x575;
+    /* 0x0575 */ u8 field_0x575;
     /* 0x0576 */ s8 field_0x576;
     /* 0x0574 */ u8 field_0x577[0x590 - 0x577];
     /* 0x0590 */ f32 field_0x590;
