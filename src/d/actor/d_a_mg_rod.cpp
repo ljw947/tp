@@ -11,6 +11,7 @@
 
 #include "d/actor/d_a_alink.h"
 #include "d/d_com_inf_game.h"
+#include "f_pc/f_pc_executor.h"
 
 //
 // Forward References:
@@ -152,7 +153,6 @@ extern "C" void fopAcM_effSmokeSet1__FPUlPUlPC4cXyzPC5csXyzfPC12dKy_tevstr_ci();
 extern "C" void fopAcM_effHamonSet__FPUlPC4cXyzff();
 extern "C" void fopAcM_getWaterStream__FPC4cXyzRC13cBgS_PolyInfoP4cXyzPii();
 extern "C" void fopKyM_createWpillar__FPC4cXyzfi();
-extern "C" void fpcEx_Search__FPFPvPv_PvPv();
 extern "C" void fpcSch_JudgeForPName__FPvPv();
 extern "C" void fpcSch_JudgeByID__FPvPv();
 extern "C" void dStage_changeScene__FifUlScsi();
@@ -1128,7 +1128,7 @@ static u8 henna[4];
 /* 804BBBD4-804BBBD8 -00001 0004+00 3/7 0/0 0/0 .bss             None */
 /* 804BBBD4 0001+00 data_804BBBD4 None */
 /* 804BBBD5 0003+00 data_804BBBD5 None */
-static u8 struct_804BBBD4[4];
+// static u8 struct_804BBBD4[4];
 
 /* 804BBBD8-804BBBE4 000050 000C+00 0/1 0/0 0/0 .bss             @4280 */
 #pragma push
@@ -1532,14 +1532,6 @@ COMPILER_STRIP_GATE(0x804BB68C, &lit_6098);
 static void pe_action(dmg_rod_class* param_0, f32 param_1) {
     // NONMATCHING
 }
-
-/* ############################################################################################## */
-/* 804BB690-804BB694 00015C 0004+00 0/13 0/0 0/0 .rodata          @6141 */
-#pragma push
-#pragma force_active on
-SECTION_RODATA static f32 const lit_6141 = 10.0f;
-COMPILER_STRIP_GATE(0x804BB690, &lit_6141);
-#pragma pop
 
 /* 804BB694-804BB698 000160 0004+00 0/1 0/0 0/0 .rodata          @6142 */
 #pragma push
@@ -2502,20 +2494,7 @@ static int useHeapInit(fopAc_ac_c* param_0) {
     return 1;
 }
 
-/* ############################################################################################## */
-/* 804BB82C-804BB830 0002F8 0004+00 0/1 0/0 0/0 .rodata          @11462 */
-#pragma push
-#pragma force_active on
-SECTION_RODATA static f32 const lit_11462 = -50000.0f;
-COMPILER_STRIP_GATE(0x804BB82C, &lit_11462);
-#pragma pop
-
-/* 804BB830-804BB830 0002FC 0000+00 0/0 0/0 0/0 .rodata          @stringBase0 */
-#pragma push
-#pragma force_active on
-SECTION_DEAD static char const* const stringBase_804BB83E = "T_MUKAO";
-SECTION_DEAD static char const* const stringBase_804BB846 = "Mg_rod";
-#pragma pop
+static u8 struct_804BBBD4[4];
 
 int dmg_rod_class::create() {
     u32 uVar8;
@@ -2526,22 +2505,35 @@ int dmg_rod_class::create() {
     field_0x575 = 0;
     field_0x576 = 0x0;
 
-    // if field_0x0574 == '\x0f'
+    if (field_0x574 == 0x0F) {
+        field_0x574 = 0xD;
+    }
 
     if (daPy_getPlayerActorClass()->checkCanoeRide()) {
         field_0x574 = 0xD;
         field_0x575 = 0;
     }
 
+    if (field_0x574 == 0xD && strcmp(dComIfGp_getStartStageName(), "T_MUKAO") == 0 &&
+        fopAcM_GetRoomNo(daPy_getPlayerActorClass()) == 4)
+    {
+        field_0x575 = 1;
+        field_0x574 = 0x1D;
+    }
+
+    field_0x6a0 = (float)field_0x574;
+
     if (field_0x575 == 0) {
-        // field945_0xF7C = 0;
+        field_0xf7c = 0;
         mResName = "Mg_rod";
         uVar8 = 0x15FE0;
     } else {
-        // field945_0xF7C = 1;
+        field_0xf7c = 1;
         mResName = "Alink";
         uVar8 = 0xC9A0;
     }
+
+    struct_804BBBD4[0] = 1;
 
     int phaseState = dComIfG_resLoad(&mPhase, mResName);
 
@@ -2549,7 +2541,30 @@ int dmg_rod_class::create() {
         if (!fopAcM_entrySolidHeap(this, useHeapInit, uVar8)) {
             return cPhs_ERROR_e;
         }
-        // dmg_rod_Execute();
+
+        if (struct_804BBBD4[1] == 0) {
+            field_0x168e = 1;
+            struct_804BBBD4[1] = 1;
+            l_HIO[3] = -1;
+        }
+
+        mObjAcch.Set(fopAcM_GetPosition_p(this), fopAcM_GetOldPosition_p(this), this, 1, &mAcchCir,
+                     fopAcM_GetSpeed_p(this), NULL, NULL);
+        mAcchCir.SetWall(10.0f, 10.0f);
+
+        if (strcmp(dComIfGp_getStartStageName(), "F_SP127") != 0) {
+            field_0x590 = -50000.0f;
+        }
+
+        mCreature.init(&current.pos, &current.pos, 3, 1);
+
+        field_0x590 = 0x14;
+        dmg_rod_class* rod;
+        rod = (dmg_rod_class*)fpcEx_Search(s_boat_sub, this);
+        if (rod != NULL) {
+            uVar8 = rod->mRodId;
+        }
+        mRodId = uVar8;
     }
 
     return phaseState;

@@ -84,7 +84,7 @@ void daObjNameplate_c::initCcSphere() {
         },                                                    // mObjInf
         {
             {{0.0f, -115.0f, 0.0f}, 50.0f}  // mSph
-        }                                   // mSphAttr
+        }  // mSphAttr
     };
 
     mCcDStts.Init(0xff, 0xff, this);
@@ -252,7 +252,6 @@ int daObjNameplate_c::createHeap() {
     J3DModelData* modelData = (J3DModelData*)dComIfG_getObjectRes(l_arcName, "J_Hyousatu.bmd");
     model = mDoExt_J3DModel__create(modelData, 0x80000, 0x11000084);
 
-    // return model == NULL;
     if (model == NULL) {
         return 0;
     }
